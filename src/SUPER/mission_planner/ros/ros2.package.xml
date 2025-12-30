@@ -1,0 +1,17 @@
+<package format="2">
+    <version>0.0.0</version>
+    <name>mission_planner</name>
+    <description>mission_planner</description>
+    <maintainer email="renyf@connect.hku.hk">Yunfan Ren</maintainer>
+    <license>BSD</license>
+    <buildtool_depend>ament_cmake</buildtool_depend>
+    <depend>rclcpp</depend>
+    <depend>sensor_msgs</depend>
+    <depend>geometry_msgs</depend>
+    <depend>nav_msgs</depend>
+    <depend>std_msgs</depend>
+    <depend>mavros_msgs</depend>
+    <export>
+        <build_type>ament_cmake</build_type>
+    </export>
+</package>

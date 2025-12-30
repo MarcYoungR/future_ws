@@ -1,0 +1,14 @@
+<launch>
+    <include file="$(find mavros)/launch/px4.launch">
+        <arg name="fcu_url" value="/dev/ttyACM0:921600" />
+    </include>
+
+    <include file="$(find px4ctrl)/launch/run_ctrl.launch" />
+
+    <node pkg="super_planner" name="fsm_node" type="fsm_node" output="screen">
+        <param name="config_name" value="real_drone_params.yaml" type="string"/>
+    </node>
+
+    <node pkg="rviz" type="rviz" name="real_flight_rviz" args="-d $(find super_planner)/rviz/default.rviz" />
+
+</launch>

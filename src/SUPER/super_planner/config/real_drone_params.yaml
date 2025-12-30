@@ -1,0 +1,214 @@
+#
+# 文件名: real_drone_params.yaml
+# 描述: 用于真实飞行的 'super_planner' 配置文件。
+# 基于 'static_dense.yaml' 修改。
+#
+
+fsm:
+  # [修改] 必须关闭 Rviz 点击，防止在真实飞行中发生意外的目标点发布。
+  click_goal_en: false
+  click_goal_topic: "/planning/click_goal"
+  click_height: 1.5
+  click_yaw_en: true
+  replan_rate: 15.0
+  
+  # [确认] 这是 'super_planner' -> 'px4ctrl' 的指令主题。
+  # 确保它与 'px4ctrl' 的 'cmd_topic_name' 参数匹配。
+  cmd_topic: "/planning/pos_cmd"
+  mpc_cmd_topic: "/planning_cmd/poly_traj"
+  timer_en: true
+
+super_planner:
+  backup_traj_en: true
+  detailed_log_en: false
+  
+  # [建议] 在实飞调试的初始阶段保持可视化为 true。
+  visualization_en: true
+  use_fov_cut: false
+  print_log: false
+  visual_process: false
+  frontend_in_known_free: false
+  goal_yaw_en: false
+  goal_vel_en: false
+  corridor_bound_dis: 0.8
+  corridor_line_max_length: 1.0
+  safe_corridor_line_max_length: 6.0
+  iris_iter_num: 2
+  obs_skip_num: 2
+  replan_forward_dt: 0.1
+  planning_horizon: 7.0
+  sensing_horizon: -1
+  receding_dis: 1.0
+  robot_r: 0.2
+  yaw_dot_max: 3.0
+  # Yaw mode: 1 heading to velocity, 2 heading to goal
+  yaw_mode: 1
+  mpc_horizon: 15
+
+traj_opt:
+  switch:
+    save_log_en: false
+    print_optimizer_log: false
+
+  boundary:
+    # ----------------------------------------------------
+    # [安全关键] 必须根据你的无人机动力学重新设置
+    # 这些是用于初次安全测试的保守值。
+    # ----------------------------------------------------
+    max_vel: 1.5     # [修改] 从 8.0 降到安全值 (例如 1.5 m/s)
+    max_acc: 1.0     # [修改] 从 15.0 降到安全值 (例如 1.0 m/s^2)
+    max_jerk: 5.0    # [修改] 从 120.0 降到安全值 (例如 5.0 m/s^3)
+    # ----------------------------------------------------
+    max_omg: 2.5
+    max_acc_thr: 17.0
+    min_acc_thr: 6.0
+    penna_margin: 0.05
+
+  exp_traj:
+    # 1 for xi 2 for pos
+    pos_constraint_type: 1
+    energy_cost_type: 4
+    block_energy_cost: false
+    opt_accuracy: 5.0e-6
+    scale_factor: 1.0
+    integral_reso: 15
+    smooth_eps: 0.01
+    penna_t: 1.0e+7
+    penna_pos: 5.0e+9
+    penna_vel: 5.0e+8
+    penna_acc: 5.0e+8
+    penna_jerk: -5.0e+8
+    penna_attract: 5.0e+8
+    penna_omg: -1
+    penna_thr: -1
+
+  backup_traj:
+    uniform_time_en: true
+    pos_constraint_type: 2
+    piece_num: 2
+    energy_cost_type: 4
+    block_energy_cost: true
+    opt_accuracy: 1.0e-5
+    scale_factor: 1.0
+    integral_reso: 12
+    smooth_eps: 0.01
+    penna_t: 100.0
+    penna_ts: 1.0e+7
+    penna_pos: 1.0e+10
+    penna_vel: 1.0e+8
+    penna_acc: 1.0e+8
+    penna_jerk: -1.0e+6
+    penna_omg: -1
+    penna_thr: -1
+
+  flatness:
+    # ----------------------------------------------------
+    # [安全关键] 必须与你的无人机物理参数一致
+    # ----------------------------------------------------
+    mass: 1.5        # [修改] 必须修改为你的无人机精确的质量 (kg)
+    # ----------------------------------------------------
+    dh: 0.35
+    dv: 0.35
+    cp: 0.001
+    v_eps: 0.0001
+    grav: 9.81
+
+
+astar:
+  map_voxel_num: [ 500, 500, 100 ]
+  visual_process: false
+  allow_diag: true
+  # 0 DIAG; 1 MANHATTAN; 2 EUCLIDEAN
+  heu_type: 2
+  debug_visualization_en: false
+
+
+rog_map:
+  resolution: 0.05
+  inflation_resolution: 0.1
+  inflation_step: 3
+  unk_inflation_en: false
+  unk_inflation_step: 1
+  map_size: [ 15,110,6 ]
+  # If the map rolling is disable, the map origin [m] should be set.
+  fix_map_origin: [ 0,0,1.5 ]
+  frontier_extraction_en: false
+
+  # Virtual ceil and ground
+  virtual_ceil_height: 3.5
+  virtual_ground_height: -0.1
+
+  load_pcd_en: false
+
+  map_sliding:
+    enable: false
+    # The minimum distance [m] to slide the map.
+    threshold: 3.0
+
+  esdf:
+    enable: false
+    resolution: 0.1
+    # The range of esdf around the odom [m].
+    local_update_box: [ 5,5,3 ]
+
+  # If [enable = true], the ROG-Map will actively take ros topic as input.
+  #  else user should call function [updateMap] to update the map.
+  ros_callback:
+    enable: true
+    # ----------------------------------------------------
+    # [数据链路关键] 必须匹配你真实的传感器 Topic
+    # ----------------------------------------------------
+    # [修改] 示例：改为你的 RealSense 点云主题
+    cloud_topic: "/camera/depth/color/points" 
+    # [修改] 示例：改为你的 VINS (VIO) 里程计主题
+    odom_topic: "/vins_estimator/odometry"    
+    # ----------------------------------------------------
+    odom_timeout: 2.0
+
+
+  visualization:
+    # [建议] 在实飞中启用，用于 Rviz 监控
+    enable: true
+    # when enabled, use rqt_reconfigure to change the visualization parameters.
+    use_dynamic_reconfigure: false
+    # The rate of visualization [Hz], if set to 0, the visualization will not be triggered by frame.
+    time_rate: 2
+    # The frame rate of visualization [Hz], if set to 0, the visualization will not be triggered by frame.
+    frame_rate: 0
+    # visualization range along the odom [m].
+    range: [ 15, 15,4 ]
+    frame_id: "world"
+    pub_unknown_map_en: false
+
+  # Intensity filter for input point cloud. If the point intensity is less than this value,
+  # it will be ignored (to avoid noise like dusk).
+  intensity_thresh: -10
+  # The temporal downsample rate for input point cloud.
+  #  e.g. if set to k, the point cloud will be downsampled to 1/k.
+  point_filt_num: 1
+
+  # Probabilistc update
+  raycasting:
+    # if disable, the map will only maintain occupied information, and all other grid
+    # will be considered as unknown.
+    enable: false
+    batch_update_size: 1
+    local_update_box: [ 100,100,5 ]
+    # The range of raycasting [m].
+    ray_range: [0.5, 100 ]
+
+    p_min: 0.12
+    p_miss: 0.49
+    p_free: 0.499
+    p_occ: 0.85
+    p_hit: 0.9
+    p_max: 0.98
+    # The threshold of a non-occupied inf map grid to be considered as free. [0.0-1.0]
+    # for counter map, if each cell contains N cells in prob map, then only when
+    # N_unk > N * unk_thresh cells are unknown, the cell will be considered as unknown.
+    # example: 1) if unk_thresh is set 0.0, then once at least one cell in prob map is unknown,
+    #             the cell will be considered as unknown.
+    #         2) if unk_thresh is set to 1.0, then only all cells in prob map are unknown,
+    #             the cell will be considered as unknown.
+    # in all, 1.0 is more aggressive while 0.0 is more conservative.
+    unk_thresh: 1.0

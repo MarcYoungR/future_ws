@@ -1,0 +1,44 @@
+<launch>
+<!-- Launch file for Livox MID360 LiDAR -->
+
+	<arg name="rviz" default="false" />
+
+	<rosparam command="load" file="$(find fast_lio)/config/mid360.yaml" />
+
+	<param name="feature_extract_enable" type="bool" value="0"/>
+	<param name="point_filter_num" type="int" value="3"/>
+	<param name="max_iteration" type="int" value="3" />
+	<param name="filter_size_surf" type="double" value="0.5" />
+	<param name="filter_size_map" type="double" value="0.5" />
+	<param name="cube_side_length" type="double" value="1000" />
+	<param name="runtime_pos_log_enable" type="bool" value="1" />
+
+    <!-- MAVROS configs -->
+    <arg name="fcu_url" default="/dev/ttyACM0:921600"/>
+    <arg name="respawn_mavros" default="false"/>
+
+    <!-- MAVROS -->
+    <include file="$(find mavros)/launch/px4.launch">
+        <!-- GCS link is provided by SITL -->
+		<!-- gcs_url是为了在另一台电脑上打开QGC，设置为空则默认本地QGC，以下设置是所有其他的电脑QGC都可以连接 -->
+        <arg name="gcs_url" value="udp-b://@"/>
+		<!-- fcu_url是为了连接飞控板 -->
+        <arg name="fcu_url" value="$(arg fcu_url)"/>
+        <arg name="respawn_mavros" value="$(arg respawn_mavros)"/>
+    </include>
+
+    <node pkg="fast_lio" type="fastlio_mapping" name="laserMapping" output="screen" >
+		<!-- <remap from="Odometry" to="/mavros/local_position/odom" /> -->
+	</node> 
+    <node pkg="fast_lio" type="livox_ros_pointcloud_filtered.py" name="generate_pointcloud" output="screen" /> 
+
+	<node pkg="tf" type="static_transform_publisher" name="map_to_world" args="0 0 0 0 0 0 map world 100" />
+	<node pkg="tf" type="static_transform_publisher" name="body_to_base_link" args="0 0 0 0 0 0 body base_link 100" />
+	<!-- 这个是为了ufomap使用，不用每次仿真和实际切换修改cfg文件，建立body和sensor的转换关系 -->
+	<node pkg="tf" type="static_transform_publisher" name="body_to_sensor" args="0 0 0 0 0 0 body sensor 100" />
+
+	<group if="$(arg rviz)">
+	<node launch-prefix="nice" pkg="rviz" type="rviz" name="rviz" args="-d $(find fast_lio)/rviz_cfg/loam_livox.rviz" />
+	</group>
+
+</launch>

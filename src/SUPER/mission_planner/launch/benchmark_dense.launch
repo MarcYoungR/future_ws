@@ -1,0 +1,30 @@
+<launch>
+    <node pkg="mission_planner" name="waypoint_mission" type="waypoint_mission" output="screen">
+        <!--     1. use absolute path -->
+        <!--         <param name="config_path" value="" type="string"></param> -->
+        <!--     2. use file name in super_planner/config/... -->
+        <param name="data_name" value="benchmark.txt" type="string"></param>
+    </node>
+
+    <node pkg="perfect_drone_sim" type="perfect_drone" name="perfect_drone" output="log">
+        <!--     1. use absolute path -->
+        <!--         <param name="config_path" value="" type="string"></param> -->
+        <!--     2. use file name in super_planner/config/... -->
+        <param name="config_name" value="dense.yaml" type="string"></param>
+    </node>
+
+    <!--     click_demo_high_speed.launch -->
+
+    <node pkg="super_planner" name="fsm_node" type="fsm_node" output="screen">
+        <!--     1. use absolute path -->
+        <!--         <param name="config_path" value="" type="string"></param> -->
+        <!--     2. use file name in super_planner/config/... -->
+        <param name="config_name" value="static_dense.yaml" type="string"></param>
+    </node>
+
+
+    <node pkg="rviz" type="rviz" name="top_down" args="-d $(find perfect_drone_sim)/rviz/benchmark.rviz" output="log"/>
+    <node pkg="rviz" type="rviz" name="fpv" args="-d $(find perfect_drone_sim)/rviz/fpv.rviz" output="log"/>
+
+
+</launch>

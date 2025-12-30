@@ -1,0 +1,15 @@
+<launch>
+
+    <!-- MAVROS configs -->
+    <arg name="fcu_url" default="/dev/ttyACM0:921600"/>
+    <arg name="respawn_mavros" default="false"/>
+
+    <!-- MAVROS -->
+    <include file="$(find mavros)/launch/px4.launch">
+        <!-- GCS link is provided by SITL -->
+        <arg name="gcs_url" value="udp-b://@"/>
+        <arg name="fcu_url" value="$(arg fcu_url)"/>
+        <arg name="respawn_mavros" value="$(arg respawn_mavros)"/>
+    </include>
+
+</launch>

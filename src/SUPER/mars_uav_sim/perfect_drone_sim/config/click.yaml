@@ -1,0 +1,29 @@
+#############| For UAV simulation |#################################
+pcd_name: "random_map_150.pcd"
+mesh_resource: "package://perfect_drone_sim/meshes/yunque-M.dae"
+init_position:
+  x: 0
+  y: 0
+  z: 1.5
+init_yaw: 1.5741
+
+#############|For LiDAR perception simulation |#################################
+is_360lidar: true
+polar_resolution: 0.4
+downsample_res: 0.1
+vertical_fov: 178.0
+sensing_blind: 0.1
+sensing_horizon: 70
+sensing_rate: 10
+print_time_consumption: false
+#  enum LiDARType{
+#  UNDEFINED = 0,
+#  AVIA = 1,
+#  GENERAL_360 = 2,
+#  MID_360 = 3
+#  };
+lidar_type: 2
+depth_image_en: false
+
+
+

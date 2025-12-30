@@ -1,0 +1,20 @@
+<launch>
+    <node pkg="perfect_drone_sim" type="perfect_drone" name="perfect_drone" output="log">
+        <!--     1. use absolute path -->
+        <!--         <param name="config_path" value="" type="string"></param> -->
+        <!--     2. use file name in super_planner/config/... -->
+                <param name="config_name" value="dense.yaml" type="string"></param>
+    </node>
+
+<!--     click_demo_high_speed.launch -->
+    <include file="$(find super_planner)/launch/click_demo_smooth.launch">
+
+    </include>
+
+
+    <node pkg="rviz" type="rviz" name="top_down" args="-d $(find perfect_drone_sim)/rviz/top_down.rviz" output="log"/>
+    <node pkg="rviz" type="rviz" name="fpv" args="-d $(find perfect_drone_sim)/rviz/fpv.rviz" output="log"/>
+
+
+
+</launch>

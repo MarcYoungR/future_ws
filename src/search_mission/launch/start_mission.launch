@@ -1,0 +1,6 @@
+<launch>
+    <rosparam command="load" file="$(find search_mission)/config/mission_config.yaml" />
+
+    <node pkg="search_mission" type="mission_fsm_node" name="mission_fsm_node" output="screen">
+        </node>
+</launch>

@@ -1,0 +1,14 @@
+<launch>
+
+    <!--     click_demo_high_speed.launch -->
+
+    <node pkg="super_planner" name="fsm_node" type="fsm_node" output="screen">
+<!--     1. use absolute path -->
+<!--         <param name="config_path" value="" type="string"></param> -->
+<!--     2. use file name in super_planner/config/... -->
+        <param name="config_name" value="click_smooth_ros1.yaml" type="string"></param>
+    </node>
+
+
+
+</launch>

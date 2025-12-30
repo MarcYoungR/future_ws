@@ -1,0 +1,32 @@
+# ================= 话题配置 =================
+goal_topic: "/planning/click_goal"        # 发给 Super Planner
+odom_topic: "/Odometry" # 自身定位
+aruco_topic: "/aruco_single/pose"         # 视觉检测结果 (必须确保该Topic存在)
+state_topic: "/mavros/state"
+
+# ================= 任务流程 =================
+takeoff_height: 1.0  # 起飞高度 (米)
+
+# 航点列表 [x, y, z, yaw_deg]
+# 注意：最后一点是降落搜索的起始点
+waypoints:
+  - [2.0, 0.0, 1.5, 0.0]    # 第一点
+  - [2.0, 2.0, 1.5, 90.0]   # 第二点
+  - [0.0, 2.0, 1.5, 180.0]  # 第三点
+  - [0.0, 0.0, 1.5, 0.0]    # 最后一点 (回原点降落)
+
+# ================= 误差与超时 =================
+reach_tol_xyz: 0.2        # XYZ 到达误差 (m)
+reach_tol_yaw_deg: 30.0   # 角度到达误差 (度)
+wp_timeout: 30.0          # 单点超时 (s)
+
+# ================= 降落逻辑 =================
+landing_search_timeout: 45.0 # 搜寻总时长 (s)
+search_radius: 1.0           # 搜寻半径 (m)
+descend_vel: 0.2             # 下降速度 (m/s)
+land_kp_xy: 0.6              # 视觉修正力度
+
+# [关键] 负高度穿地逻辑 (小车高度约 0.3m -> 地面 z=-0.3)
+ground_height: -0.3          # 实际地面高度
+land_height_threshold: -0.2  # 低于此高度停止修正，直接压下去
+final_land_setpoint: -0.8    # 发送一个地下坐标，确保压实地面
